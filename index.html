@@ -102,18 +102,18 @@
         transform: scale(0.97);
       }
 
-      /* Botões Virtuais */
+      /* Estilização dos botões virtuais */
       .botao-virtual {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
+        width: 80px; /* Aumenta o tamanho dos botões */
+        height: 80px; /* Aumenta o tamanho dos botões */
+        font-size: 36px; /* Aumenta o tamanho da fonte das setas */
         background-color: #f5c518;
         color: #000;
         border: none;
         border-radius: 50%;
-        margin: 5px;
+        margin: 10px; /* Aumenta o espaçamento entre os botões */
         cursor: pointer;
-        display: none; /* Oculta por padrão em telas grandes */
+        display: none; /* Oculta por padrão */
       }
 
       /* Exibe os botões virtuais apenas em telas pequenas (menos de 768px) */
@@ -121,26 +121,15 @@
         .botao-virtual {
           display: block; /* Exibe os botões virtuais */
         }
-
-        /* Reduz o tamanho dos botões principais para caberem melhor */
-        .controls button {
-          padding: 8px 12px; /* Diminui o preenchimento interno */
-          font-size: 14px; /* Diminui o tamanho da fonte */
-        }
       }
 
       /* Ajustes para telas muito pequenas (celulares com largura < 400px) */
       @media (max-width: 400px) {
         .botao-virtual {
-          width: 50px;
-          height: 50px;
-          font-size: 20px;
-        }
-
-        /* Reduz ainda mais os botões principais */
-        .controls button {
-          padding: 6px 10px; /* Preenchimento ainda menor */
-          font-size: 12px; /* Tamanho de fonte reduzido ainda mais */
+          width: 70px; /* Diminui um pouco o tamanho para caber melhor */
+          height: 70px;
+          font-size: 32px; /* Diminui um pouco a fonte */
+          margin: 8px; /* Reduz o espaçamento */
         }
       }
     </style>

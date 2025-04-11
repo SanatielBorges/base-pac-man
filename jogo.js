@@ -1,9 +1,15 @@
-// ===== VARIÁVEIS GERAIS =====
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 const endButton = document.getElementById("endButton");
+
+const nivelButtons = {
+  facil: document.getElementById("nivelFacil"),
+  medio: document.getElementById("nivelMedio"),
+  dificil: document.getElementById("nivelDificil"),
+};
+
 const tileSize = 20;
 const rows = 17;
 const cols = 19;
@@ -16,6 +22,8 @@ let pausado = false;
 let lastTime = 0;
 let ultimasPosicoesPredador = [];
 const MAX_MEMORIA_PREDADOR = 5;
+
+let velocidadeAtual = 200;
 
 // ===== MENSAGEM VISUAL =====
 const mensagem = document.createElement("div");
@@ -74,6 +82,25 @@ function criarMoedas() {
   }
 }
 
+function selecionarNivel(nivel) {
+  switch (nivel) {
+    case "facil":
+      velocidadeAtual = 300;
+      break;
+    case "medio":
+      velocidadeAtual = 200;
+      break;
+    case "dificil":
+      velocidadeAtual = 120;
+      break;
+  }
+
+  // Destaque visual
+  Object.entries(nivelButtons).forEach(([key, btn]) => {
+    btn.classList.toggle("selected", key === nivel);
+  });
+}
+
 function updatePredador() {
   const direcoes = [
     { dx: 0, dy: -1, direction: "up" },
@@ -91,8 +118,8 @@ function updatePredador() {
 
     if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && map[ny][nx] === 1) {
       const distancia = Math.abs(pacman.x - nx) + Math.abs(pacman.y - ny);
-
       let penalidade = 0;
+
       for (let i = 0; i < ultimasPosicoesPredador.length; i++) {
         if (ultimasPosicoesPredador[i] === destino) {
           penalidade += (ultimasPosicoesPredador.length - i) * 2;
@@ -100,17 +127,14 @@ function updatePredador() {
       }
 
       const pontuacao = distancia + penalidade;
-
-      opcoes.push({ ...dir, nx, ny, distancia, pontuacao });
+      opcoes.push({ ...dir, nx, ny, pontuacao });
     }
   }
 
   if (opcoes.length > 0) {
     opcoes.sort((a, b) => a.pontuacao - b.pontuacao);
     const melhor = opcoes[0];
-
-    const posicaoAtual = `${predador.x},${predador.y}`;
-    ultimasPosicoesPredador.unshift(posicaoAtual);
+    ultimasPosicoesPredador.unshift(`${predador.x},${predador.y}`);
     if (ultimasPosicoesPredador.length > MAX_MEMORIA_PREDADOR) {
       ultimasPosicoesPredador.pop();
     }
@@ -130,18 +154,12 @@ function updatePredador() {
 }
 
 function update() {
-  const nextX = pacman.x + pacman.dx;
-  const nextY = pacman.y + pacman.dy;
+  const nx = pacman.x + pacman.dx;
+  const ny = pacman.y + pacman.dy;
 
-  if (
-    nextX >= 0 &&
-    nextX < cols &&
-    nextY >= 0 &&
-    nextY < rows &&
-    map[nextY][nextX] === 1
-  ) {
-    pacman.x = nextX;
-    pacman.y = nextY;
+  if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && map[ny][nx] === 1) {
+    pacman.x = nx;
+    pacman.y = ny;
     moedas = moedas.filter((m) => m.x !== pacman.x || m.y !== pacman.y);
   }
 
@@ -173,11 +191,11 @@ function drawMap() {
 
 function drawMoedas() {
   ctx.fillStyle = "yellow";
-  moedas.forEach((moeda) => {
+  moedas.forEach(({ x, y }) => {
     ctx.beginPath();
     ctx.arc(
-      moeda.x * tileSize + tileSize / 2,
-      moeda.y * tileSize + tileSize / 2,
+      x * tileSize + tileSize / 2,
+      y * tileSize + tileSize / 2,
       5,
       0,
       Math.PI * 2
@@ -187,24 +205,13 @@ function drawMoedas() {
 }
 
 function drawPacman() {
-  let startAngle = 0.25;
-  let endAngle = 1.75;
-  let rotation = 0;
-
-  switch (pacman.direction) {
-    case "right":
-      rotation = 0;
-      break;
-    case "left":
-      rotation = Math.PI;
-      break;
-    case "up":
-      rotation = -Math.PI / 2;
-      break;
-    case "down":
-      rotation = Math.PI / 2;
-      break;
-  }
+  const angleMap = {
+    right: 0,
+    left: Math.PI,
+    up: -Math.PI / 2,
+    down: Math.PI / 2,
+  };
+  const rotation = angleMap[pacman.direction] || 0;
 
   ctx.save();
   ctx.translate(
@@ -214,31 +221,20 @@ function drawPacman() {
   ctx.rotate(rotation);
   ctx.beginPath();
   ctx.moveTo(0, 0);
-  ctx.arc(0, 0, tileSize / 2 - 2, Math.PI * startAngle, Math.PI * endAngle);
+  ctx.arc(0, 0, tileSize / 2 - 2, Math.PI * 0.25, Math.PI * 1.75);
   ctx.fillStyle = "white";
   ctx.fill();
   ctx.restore();
 }
 
 function drawPredador() {
-  let startAngle = 0.25;
-  let endAngle = 1.75;
-  let rotation = 0;
-
-  switch (predador.direction) {
-    case "right":
-      rotation = 0;
-      break;
-    case "left":
-      rotation = Math.PI;
-      break;
-    case "up":
-      rotation = -Math.PI / 2;
-      break;
-    case "down":
-      rotation = Math.PI / 2;
-      break;
-  }
+  const angleMap = {
+    right: 0,
+    left: Math.PI,
+    up: -Math.PI / 2,
+    down: Math.PI / 2,
+  };
+  const rotation = angleMap[predador.direction] || 0;
 
   ctx.save();
   ctx.translate(
@@ -248,7 +244,7 @@ function drawPredador() {
   ctx.rotate(rotation);
   ctx.beginPath();
   ctx.moveTo(0, 0);
-  ctx.arc(0, 0, tileSize / 2 - 2, Math.PI * startAngle, Math.PI * endAngle);
+  ctx.arc(0, 0, tileSize / 2 - 2, Math.PI * 0.25, Math.PI * 1.75);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.restore();
@@ -257,7 +253,7 @@ function drawPredador() {
 function gameLoop(timestamp) {
   if (!jogoRodando || pausado) return;
   const deltaTime = timestamp - lastTime;
-  if (deltaTime >= 200) {
+  if (deltaTime >= velocidadeAtual) {
     update();
     lastTime = timestamp;
   }

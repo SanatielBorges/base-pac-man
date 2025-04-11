@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pac-Man vs Predador</title>
 
-    <!-- Fonte moderna -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
@@ -25,9 +24,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
-        min-height: 100vh;
         padding: 40px 20px;
+        min-height: 100vh;
       }
 
       h1 {
@@ -36,6 +34,35 @@
         margin-bottom: 20px;
         text-align: center;
         color: #f5c518;
+      }
+
+      .level-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .level-buttons button {
+        background-color: #292929;
+        color: #f5f5f5;
+        border: 2px solid #444;
+        padding: 8px 20px;
+        font-size: 14px;
+        border-radius: 6px;
+        transition: 0.3s ease;
+        cursor: pointer;
+      }
+
+      .level-buttons button:hover {
+        background-color: #f5c518;
+        color: #000;
+        border-color: #f5c518;
+      }
+
+      .level-buttons button.selected {
+        background-color: #f5c518;
+        color: #000;
+        border-color: #f5c518;
       }
 
       canvas {
@@ -60,6 +87,7 @@
         font-weight: 500;
         border-radius: 6px;
         transition: all 0.3s ease;
+        cursor: pointer;
       }
 
       button:hover {
@@ -73,16 +101,26 @@
       }
 
       @media (max-width: 400px) {
-        .controls {
+        .controls,
+        .level-buttons {
           flex-direction: column;
         }
       }
     </style>
   </head>
+
   <body>
     <h1>Pac-Man vs Predador</h1>
 
-    <canvas id="gameCanvas" width="300" height="300"></canvas>
+    <div class="level-buttons">
+      <button id="nivelFacil" onclick="selecionarNivel('facil')">Fácil</button>
+      <button id="nivelMedio" onclick="selecionarNivel('medio')">Médio</button>
+      <button id="nivelDificil" onclick="selecionarNivel('dificil')">
+        Difícil
+      </button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
 
     <div class="controls">
       <button id="startButton">Iniciar</button>

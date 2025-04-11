@@ -1,15 +1,19 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+
+// Botões de controle
 const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 const endButton = document.getElementById("endButton");
 
+// Botões de nível
 const nivelButtons = {
   facil: document.getElementById("nivelFacil"),
   medio: document.getElementById("nivelMedio"),
   dificil: document.getElementById("nivelDificil"),
 };
 
+// Tamanho do jogo
 const tileSize = 20;
 const rows = 17;
 const cols = 19;
@@ -22,7 +26,6 @@ let pausado = false;
 let lastTime = 0;
 let ultimasPosicoesPredador = [];
 const MAX_MEMORIA_PREDADOR = 5;
-
 let velocidadeAtual = 200;
 
 // Sons
@@ -120,12 +123,10 @@ function selecionarNivel(nivel) {
       velocidadeAtual = 120;
       break;
   }
-
   Object.entries(nivelButtons).forEach(([key, btn]) => {
     btn.classList.toggle("selected", key === nivel);
   });
 }
-
 function updatePredador() {
   const direcoes = [
     { dx: 0, dy: -1, direction: "up" },
@@ -320,10 +321,8 @@ function startGame() {
   criarMoedas();
   lastTime = performance.now();
   mensagem.style.display = "none";
-
   atualizarPontuacao(); // Atualiza a pontuação inicial
   atualizarVidas(); // Atualiza as vidas iniciais
-
   requestAnimationFrame(gameLoop);
 }
 
@@ -354,33 +353,54 @@ function endGame() {
 window.onload = () => {
   selecionarNivel("facil");
 };
+// Referências aos botões virtuais
+const btnUp = document.getElementById("btnUp");
+const btnDown = document.getElementById("btnDown");
+const btnLeft = document.getElementById("btnLeft");
+const btnRight = document.getElementById("btnRight");
 
+// Função para atualizar a direção do Pac-Man
+function atualizarDirecao(dx, dy, direction) {
+  if (!jogoRodando || pausado) return;
+  pacman.dx = dx;
+  pacman.dy = dy;
+  pacman.direction = direction;
+}
+
+// Configurar eventos de clique para os botões virtuais
+btnUp.addEventListener("touchstart", () => atualizarDirecao(0, -1, "up"));
+btnDown.addEventListener("touchstart", () => atualizarDirecao(0, 1, "down"));
+btnLeft.addEventListener("touchstart", () => atualizarDirecao(-1, 0, "left"));
+btnRight.addEventListener("touchstart", () => atualizarDirecao(1, 0, "right"));
+
+// Para desktop, também suportar cliques normais
+btnUp.addEventListener("click", () => atualizarDirecao(0, -1, "up"));
+btnDown.addEventListener("click", () => atualizarDirecao(0, 1, "down"));
+btnLeft.addEventListener("click", () => atualizarDirecao(-1, 0, "left"));
+btnRight.addEventListener("click", () => atualizarDirecao(1, 0, "right"));
+
+// Controle via teclado para desktops
 document.addEventListener("keydown", (e) => {
   if (!jogoRodando || pausado) return;
   switch (e.key) {
     case "ArrowUp":
-      pacman.dx = 0;
-      pacman.dy = -1;
-      pacman.direction = "up";
+      atualizarDirecao(0, -1, "up");
       break;
     case "ArrowDown":
-      pacman.dx = 0;
-      pacman.dy = 1;
-      pacman.direction = "down";
+      atualizarDirecao(0, 1, "down");
       break;
     case "ArrowLeft":
-      pacman.dx = -1;
-      pacman.dy = 0;
-      pacman.direction = "left";
+      atualizarDirecao(-1, 0, "left");
       break;
     case "ArrowRight":
-      pacman.dx = 1;
-      pacman.dy = 0;
-      pacman.direction = "right";
+      atualizarDirecao(1, 0, "right");
       break;
   }
 });
 
+// Eventos dos botões principais
 startButton.addEventListener("click", startGame);
 endButton.addEventListener("click", endGame);
+
+// Desenhar o jogo inicialmente
 draw();

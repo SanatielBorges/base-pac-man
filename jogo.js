@@ -154,22 +154,30 @@ function updatePredador() {
 }
 
 function update() {
+  // Calcula a nova posição do Pac-Man
   const nx = pacman.x + pacman.dx;
   const ny = pacman.y + pacman.dy;
 
+  // Verifica se a nova posição é válida (não é parede)
   if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && map[ny][nx] === 1) {
     pacman.x = nx;
     pacman.y = ny;
-    moedas = moedas.filter((m) => m.x !== pacman.x || m.y !== pacman.y);
+
+    // Remove a moeda da posição atual se houver
+    moedas = moedas.filter(
+      (moeda) => moeda.x !== pacman.x || moeda.y !== pacman.y
+    );
   }
 
+  // Atualiza o predador após o movimento do Pac-Man
+  updatePredador();
+
+  // Verifica se todas as moedas foram coletadas
   if (moedas.length === 0) {
     jogoRodando = false;
-    exibirMensagem("🎉 Congratulations! Você venceu o jogo! 🎉");
+    exibirMensagem("Você venceu!");
     draw();
   }
-
-  updatePredador();
 }
 
 function draw() {
@@ -294,6 +302,11 @@ function endGame() {
   mensagem.style.display = "none";
   draw();
 }
+
+// Define o nível fácil como padrão ao carregar a página
+window.onload = () => {
+  selecionarNivel("facil"); // Seleciona o nível "Fácil" automaticamente
+};
 
 document.addEventListener("keydown", (e) => {
   if (!jogoRodando || pausado) return;

@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pac-Man vs Predador</title>
-
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
     />
-
     <style>
       * {
         box-sizing: border-box;
@@ -108,7 +106,6 @@
       }
     </style>
   </head>
-
   <body>
     <h1>Pac-Man vs Predador</h1>
 
@@ -118,6 +115,15 @@
       <button id="nivelDificil" onclick="selecionarNivel('dificil')">
         Difícil
       </button>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 20px">
+      <span
+        id="pontuacao"
+        style="color: #f5c518; font-size: 20px; margin-right: 20px"
+        >Pontuação: 0</span
+      >
+      <span id="vidas" style="color: #f5c518; font-size: 20px">Vidas: 3</span>
     </div>
 
     <canvas id="gameCanvas"></canvas>

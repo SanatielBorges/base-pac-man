@@ -25,7 +25,17 @@ const MAX_MEMORIA_PREDADOR = 5;
 
 let velocidadeAtual = 200;
 
-// ===== MENSAGEM VISUAL =====
+// Sons
+const somMoeda = new Audio("coins.mp3");
+const somCaptura = new Audio("gameover.mp3");
+const somVitoria = new Audio("vitoria.mp3");
+
+function tocarSom(som) {
+  som.currentTime = 0;
+  som.play();
+}
+
+// Mensagem Visual
 const mensagem = document.createElement("div");
 mensagem.style.position = "absolute";
 mensagem.style.top = "50%";
@@ -46,7 +56,7 @@ function exibirMensagem(texto) {
   mensagem.style.display = "block";
 }
 
-// ===== MAPA DO JOGO =====
+// Mapa do Jogo
 const map = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
@@ -70,6 +80,22 @@ const map = [
 let pacman = { x: 1, y: 1, dx: 0, dy: 0, direction: "right" };
 let predador = { x: cols - 2, y: rows - 2, dx: 0, dy: -1, direction: "up" };
 let moedas = [];
+let pontuacao = 0;
+let vidas = 3;
+
+// Referências aos elementos HTML
+const pontuacaoElement = document.getElementById("pontuacao");
+const vidasElement = document.getElementById("vidas");
+
+// Função para atualizar a pontuação no HTML
+function atualizarPontuacao() {
+  pontuacaoElement.textContent = `Pontuação: ${pontuacao}`;
+}
+
+// Função para atualizar as vidas no HTML
+function atualizarVidas() {
+  vidasElement.textContent = `Vidas: ${vidas}`;
+}
 
 function criarMoedas() {
   moedas = [];
@@ -95,7 +121,6 @@ function selecionarNivel(nivel) {
       break;
   }
 
-  // Destaque visual
   Object.entries(nivelButtons).forEach(([key, btn]) => {
     btn.classList.toggle("selected", key === nivel);
   });
@@ -147,36 +172,51 @@ function updatePredador() {
   }
 
   if (predador.x === pacman.x && predador.y === pacman.y) {
-    jogoRodando = false;
-    exibirMensagem("Você foi capturado!");
-    draw();
+    vidas--;
+    tocarSom(somCaptura);
+    atualizarVidas(); // Atualiza as vidas no HTML
+    if (vidas <= 0) {
+      jogoRodando = false;
+      exibirMensagem("Game Over!");
+    } else {
+      resetarJogador();
+    }
   }
 }
 
+function resetarJogador() {
+  pacman.x = 1;
+  pacman.y = 1;
+  pacman.dx = 0;
+  pacman.dy = 0;
+  pacman.direction = "right";
+}
+
 function update() {
-  // Calcula a nova posição do Pac-Man
   const nx = pacman.x + pacman.dx;
   const ny = pacman.y + pacman.dy;
 
-  // Verifica se a nova posição é válida (não é parede)
   if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && map[ny][nx] === 1) {
     pacman.x = nx;
     pacman.y = ny;
 
-    // Remove a moeda da posição atual se houver
-    moedas = moedas.filter(
-      (moeda) => moeda.x !== pacman.x || moeda.y !== pacman.y
+    const index = moedas.findIndex(
+      (moeda) => moeda.x === pacman.x && moeda.y === pacman.y
     );
+    if (index !== -1) {
+      moedas.splice(index, 1);
+      pontuacao += 10;
+      tocarSom(somMoeda);
+      atualizarPontuacao(); // Atualiza a pontuação no HTML
+    }
   }
 
-  // Atualiza o predador após o movimento do Pac-Man
   updatePredador();
 
-  // Verifica se todas as moedas foram coletadas
   if (moedas.length === 0) {
     jogoRodando = false;
+    tocarSom(somVitoria);
     exibirMensagem("Você venceu!");
-    draw();
   }
 }
 
@@ -275,9 +315,15 @@ function startGame() {
   pacman = { x: 1, y: 1, dx: 0, dy: 0, direction: "right" };
   predador = { x: cols - 2, y: rows - 2, dx: 0, dy: -1, direction: "up" };
   ultimasPosicoesPredador = [];
+  pontuacao = 0;
+  vidas = 3;
   criarMoedas();
   lastTime = performance.now();
   mensagem.style.display = "none";
+
+  atualizarPontuacao(); // Atualiza a pontuação inicial
+  atualizarVidas(); // Atualiza as vidas iniciais
+
   requestAnimationFrame(gameLoop);
 }
 
@@ -298,14 +344,15 @@ function endGame() {
   predador = { x: cols - 2, y: rows - 2, dx: 0, dy: -1, direction: "up" };
   ultimasPosicoesPredador = [];
   moedas = [];
+  pontuacao = 0;
+  vidas = 3;
   pauseButton.textContent = "Pausar";
   mensagem.style.display = "none";
   draw();
 }
 
-// Define o nível fácil como padrão ao carregar a página
 window.onload = () => {
-  selecionarNivel("facil"); // Seleciona o nível "Fácil" automaticamente
+  selecionarNivel("facil");
 };
 
 document.addEventListener("keydown", (e) => {

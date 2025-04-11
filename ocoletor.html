@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pac-Man vs Predador</title>
+
+    <!-- Fonte moderna -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: #121212;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #f5c518;
+      }
+
+      canvas {
+        background-color: #000;
+        border: 4px solid #f5c518;
+        border-radius: 10px;
+        box-shadow: 0 0 25px rgba(245, 197, 24, 0.5);
+      }
+
+      .controls {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      button {
+        background-color: #1f1f1f;
+        color: #f5f5f5;
+        border: 2px solid #333;
+        padding: 10px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #f5c518;
+        color: #000;
+        border-color: #f5c518;
+      }
+
+      button:active {
+        transform: scale(0.97);
+      }
+
+      @media (max-width: 400px) {
+        .controls {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pac-Man vs Predador</h1>
+
+    <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+    <div class="controls">
+      <button id="startButton">Iniciar</button>
+      <button id="pauseButton">Pausar</button>
+      <button id="endButton">Encerrar</button>
+    </div>
+
+    <script src="jogo.js"></script>
+  </body>
+</html>
